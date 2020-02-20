@@ -56,7 +56,7 @@ static BOOL WINAPI PyCtrlHandler(DWORD dwCtrlType)
 static long main_thread;
 
 
-#if defined(__BORLANDC__)
+#if defined(__BORLANDC__) || defined(_MSC_VER)
 /* These overrides not needed for Win32 */
 #define timezone _timezone
 #define tzname _tzname
@@ -805,7 +805,7 @@ inittimezone(PyObject *m) {
      */
 #if defined(HAVE_TZNAME) && !defined(__GLIBC__) && !defined(__CYGWIN__)
     tzset();
-#ifdef PYOS_OS2
+#if defined (PYOS_OS2)
     PyModule_AddIntConstant(m, "timezone", _timezone);
 #else /* !PYOS_OS2 */
     PyModule_AddIntConstant(m, "timezone", timezone);
@@ -813,7 +813,7 @@ inittimezone(PyObject *m) {
 #ifdef HAVE_ALTZONE
     PyModule_AddIntConstant(m, "altzone", altzone);
 #else
-#ifdef PYOS_OS2
+#if defined (PYOS_OS2)
     PyModule_AddIntConstant(m, "altzone", _timezone-3600);
 #else /* !PYOS_OS2 */
     PyModule_AddIntConstant(m, "altzone", timezone-3600);

@@ -575,6 +575,13 @@ extern __declspec(dllimport) char * __pioinfo[];
 int
 _PyVerify_fd(int fd)
 {
+#ifdef _MSC_VER
+    //a call to _get_osfhandle with invalid fd sets errno to EBADF
+    if (_get_osfhandle(fd) == INVALID_HANDLE_VALUE)
+        return 0;
+    else
+        return 1;
+#else
     const int i1 = fd >> IOINFO_L2E;
     const int i2 = fd & ((1 << IOINFO_L2E) - 1);
 
@@ -607,6 +614,7 @@ _PyVerify_fd(int fd)
   fail:
     errno = EBADF;
     return 0;
+#endif
 }
 
 /* the special case of checking dup2.  The target fd must be in a sensible range */
